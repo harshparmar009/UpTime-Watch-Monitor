@@ -1,0 +1,261 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  animation: fadeIn 0.35s ease;
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+
+.inactive {
+  opacity: 0.55;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 220px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+}
+
+.name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+
+.name:hover {
+  color: var(--accent-2);
+}
+
+.url {
+  overflow: hidden;
+}
+
+.urlLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  font-family: var(--font-mono);
+  transition: color 0.15s;
+}
+
+.urlLink:hover {
+  color: var(--text-2);
+}
+
+.center {
+  flex: 1;
+}
+
+.uptimeBars {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  height: 24px;
+}
+
+.bar {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  min-width: 4px;
+  transition: opacity 0.15s;
+}
+
+.bar:hover {
+  opacity: 0.8;
+}
+
+.bar.up { background: var(--green); opacity: 0.7; }
+.bar.down { background: var(--red); opacity: 0.9; }
+.bar.pending { background: var(--yellow); opacity: 0.5; }
+.bar.empty { background: var(--bg-4); }
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 60px;
+}
+
+.metricValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+.metricLabel {
+  font-size: 0.68rem;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinning {
+  color: var(--text-3);
+  animation: spin 0.8s linear infinite;
+}
+
+.menuWrap {
+  position: relative;
+}
+
+.menuBtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.menuBtn:hover {
+  background: var(--bg-3);
+  color: var(--text);
+  border-color: var(--border-hover);
+}
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: var(--bg-3);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  min-width: 140px;
+  z-index: 10;
+  box-shadow: var(--shadow);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-2);
+  font-size: 0.82rem;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.menuItem:hover {
+  background: var(--bg-4);
+  color: var(--text);
+}
+
+.menuItem.danger:hover {
+  background: var(--red-dim);
+  color: var(--red);
+}
+
+.menuDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge.up {
+  background: var(--green-dim);
+  color: var(--green);
+}
+.badge.up .dot {
+  background: var(--green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.badge.down {
+  background: var(--red-dim);
+  color: var(--red);
+}
+.badge.down .dot {
+  background: var(--red);
+}
+
+.badge.pending {
+  background: var(--yellow-dim);
+  color: var(--yellow);
+}
+.badge.pending .dot {
+  background: var(--yellow);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
