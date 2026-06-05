@@ -86,6 +86,32 @@ const swaggerEndpointSchema = new mongoose.Schema(
     enum: ["cron", "manual"],
     default: "manual",
 },
+
+hasPathParams: {
+  type: Boolean,
+  default: false,
+},
+
+hasQueryParams: {
+  type: Boolean,
+  default: false,
+},
+
+requiresAuth: {
+  type: Boolean,
+  default: false,
+},
+
+pathParams: {
+  type: Array,
+  default: [],
+},
+
+queryParams: {
+  type: Array,
+  default: [],
+},
+
   },
   {
     timestamps: true,

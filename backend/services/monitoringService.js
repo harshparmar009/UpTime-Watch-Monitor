@@ -104,9 +104,15 @@ async function checkSwaggerEndpoint(endpoint) {
       return;
     }
 
-    const url =
-      monitor.url.replace(/\/$/, "") +
-      endpoint.path;
+    // const url =
+    //   monitor.url.replace(/\/$/, "") +
+    //   endpoint.path;
+
+        const swaggerUrl = monitor.swaggerUrl || "";
+        const baseUrl = new URL(swaggerUrl).origin;
+        const url = baseUrl + endpoint.path;
+
+      console.log('Checking Swagger endpoint:', url);
 
     const startTime = Date.now();
 
@@ -160,7 +166,7 @@ async function checkSwaggerEndpoint(endpoint) {
       await endpoint.save();
     } catch (err) {
       endpoint.lastEventAt =
-      //   new Date();
+        new Date();
 
       // endpoint.totalRequests += 1;
       // endpoint.totalErrors += 1;
@@ -174,6 +180,9 @@ endpoint.totalRequests += 1;
 endpoint.totalErrors += 1;
 endpoint.status = "error";
 
+const statusCode =
+  err.response?.status || 500;
+  
 await ApiEvent.create({
   monitor: monitor._id,
   endpoint: endpoint._id,
@@ -181,7 +190,7 @@ await ApiEvent.create({
   path: endpoint.path,
   method: endpoint.method,
 
-  statusCode: 0,
+  statusCode: statusCode,
   responseTime: 0,
 
   requestBody: null,

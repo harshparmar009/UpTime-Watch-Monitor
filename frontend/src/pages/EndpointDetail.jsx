@@ -33,14 +33,13 @@ export default function EndpointDetail() {
   const [endpoint, setEndpoint] = useState(null);
   const [events, setEvents] = useState([]);
   const [expandedEvent, setExpandedEvent] = useState(null);
-  // const [wsConnected, setWsConnected] = useState(false);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     loadEndpoint();
   }, [endpointId]);
 
-  // useEffect(() => {
   //   const unsubscribe = subscribe(
   //     endpointId,
   //     (event) => {
@@ -239,6 +238,22 @@ export default function EndpointDetail() {
     ? "Auto"
     : "Manual"}
 </div>
+
+    {endpoint.monitorMode === "manual" && (
+        <div className={styles.manualReasons}>
+          {endpoint.hasPathParams && (
+            <div>⚠ Requires Path Parameters</div>
+          )}
+
+          {endpoint.hasQueryParams && (
+            <div>⚠ Requires Query Parameters</div>
+          )}
+
+          {endpoint.requiresAuth && (
+            <div>🔒 Requires Authentication</div>
+          )}
+        </div>
+      )}
 
           </div>
         </div>

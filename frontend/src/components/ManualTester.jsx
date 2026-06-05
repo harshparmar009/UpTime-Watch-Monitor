@@ -15,8 +15,14 @@ export default function ManualTester({
   const [requestBody, setRequestBody] =
     useState("{}");
 
-    const [pathParams, setPathParams] =
-  useState("{}");
+  //   const [pathParams, setPathParams] =
+  // useState("{}");
+
+  const [pathParams, setPathParams] =
+      useState({});
+  
+    const [queryParams, setQueryParams] =
+      useState({});
 
   const [loading, setLoading] =
     useState(false);
@@ -46,9 +52,8 @@ try {
     requestBody || "{}"
   );
 
-  parsedParams = JSON.parse(
-    pathParams || "{}"
-  );
+  
+  parsedParams = pathParams;
 } catch {
   setError("Invalid JSON format");
   setLoading(false);
@@ -121,24 +126,41 @@ try {
       </div>
 
       {/* Only show path parameters input if the endpoint has path parameters */}
-      {hasPathParams && (
-  <div>
+   {hasPathParams && (
+  <div className={styles.field}>
     <label>
       Path Parameters
     </label>
 
-    <textarea
-      rows={5}
-      value={pathParams}
-      onChange={(e) =>
-        setPathParams(
-          e.target.value
-        )
-      }
-      placeholder={`{
-  "id": 1
-}`}
-    />
+    {endpoint.pathParams?.map(
+      (param) => (
+        <div
+          key={param.name}
+          style={{
+            marginBottom: "10px",
+          }}
+        >
+          <input
+            type="text"
+            placeholder={param.name}
+            value={
+              pathParams[
+                param.name
+              ] || ""
+            }
+            onChange={(e) =>
+              setPathParams(
+                (prev) => ({
+                  ...prev,
+                  [param.name]:
+                    e.target.value,
+                })
+              )
+            }
+          />
+        </div>
+      )
+    )}
   </div>
 )}
 

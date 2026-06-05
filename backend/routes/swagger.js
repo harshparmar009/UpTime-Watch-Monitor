@@ -42,6 +42,10 @@ router.post(
 
       const { data } = await axios.get(swaggerUrl);
 
+      const globalRequiresAuth =
+      Array.isArray(data.security) &&
+      data.security.length > 0;
+
       if (!data.paths) {
         return res.status(400).json({
           success: false,
@@ -51,39 +55,85 @@ router.post(
 
       const endpoints = [];
 
-      for (const [path, methods] of Object.entries(data.paths)) {
-        for (const [method, details] of Object.entries(methods)) {
-          const endpoint =
-            await SwaggerEndpoint.findOneAndUpdate(
-              {
-                monitor: monitor._id,
-                path,
-                method: method.toUpperCase(),
-              },
-              {
-                monitor: monitor._id,
-                user: req.user._id,
-                path,
-                method: method.toUpperCase(),
-                summary: details.summary || "",
-                tags: details.tags || [],
-                operationId:
-                  details.operationId || "",
+     for (const [path, methods] of Object.entries(data.paths)) {
+  for (const [method, details] of Object.entries(methods)) {
 
-                monitorMode:
-                  method.toUpperCase() === "GET"
-                  ? "cron"
-                  : "manual",
-              },
-              {
-                upsert: true,
-                new: true,
-              }
-            );
 
-          endpoints.push(endpoint);
+   const endpointRequiresAuth =
+      Array.isArray(details.security) &&
+      details.security.length > 0;
+
+    const requiresAuth =
+      globalRequiresAuth ||
+      endpointRequiresAuth;
+
+
+      const pathParams =
+        details.parameters?.filter(
+          p => p.in === "path"
+        ) || [];
+
+      const queryParams =
+        details.parameters?.filter(
+          p => p.in === "query"
+        ) || [];
+
+  const upperMethod = method.toUpperCase();
+
+  const hasPathParams = path.includes("{");
+
+  const hasQueryParams =
+    details.parameters?.some(
+      p => p.in === "query"
+    ) || false;
+
+  // const requiresAuth =
+  //   details.security &&
+  //   details.security.length > 0;
+
+  const autoMonitorEligible =
+    upperMethod === "GET" &&
+    !hasPathParams &&
+    !hasQueryParams &&
+    !requiresAuth;
+
+    const endpoint =
+      await SwaggerEndpoint.findOneAndUpdate(
+        {
+          monitor: monitor._id,
+          path,
+          method: upperMethod,
+        },
+        {
+          monitor: monitor._id,
+          user: req.user._id,
+
+          path,
+          method: upperMethod,
+
+          summary: details.summary || "",
+          tags: details.tags || [],
+          operationId: details.operationId || "",
+
+          hasPathParams,
+
+          pathParams,
+          queryParams,
+
+          monitorMode:
+          autoMonitorEligible
+            ? "cron"
+            : "manual",
+        },
+        {
+          upsert: true,
+          new: true,
         }
-      }
+      );
+
+    endpoints.push(endpoint);
+  }
+}
 
       monitor.swaggerUrl = swaggerUrl;
       await monitor.save();
@@ -239,11 +289,13 @@ router.post(
       //     ""
       //   ) + endpointPath;
 
-        const baseUrl = monitor.swaggerUrl
-          .replace("/swagger.json", "")
-          .replace(/\/swagger\/v\d+$/, "");
+        // const baseUrl = monitor.swaggerUrl
+        //   .replace("/swagger.json", "")
+        //   .replace(/\/swagger\/v\d+$/, "");
 
-        const url = baseUrl + endpointPath;
+        const swaggerUrl = monitor.swaggerUrl || "";
+        const baseUrl = new URL(swaggerUrl).origin;
+        const url = baseUrl + endpointPath;  
         
 
         console.log("swagger manual check - final URL:", url);
@@ -257,10 +309,10 @@ router.post(
   requestBody
 );
 
-// console.log("Calling URL:", url);
-// console.log("Method:", endpoint.method);
-// console.log("Body:", requestBody);
-// console.log("Headers:", headers);
+console.log("Calling URL:", url);
+console.log("Method:", endpoint.method);
+console.log("Body:", requestBody);
+console.log("Headers:", headers);
 
       try {
         response = await axios({
@@ -288,19 +340,19 @@ router.post(
         });
       } catch (error) {
 
-  //       console.log("AXIOS ERROR:");
-  // console.log(error.message);
+        console.log("AXIOS ERROR:");
+  console.log(error.message);
 
-  // console.log("ERROR RESPONSE:");
-  // console.log(error.response?.status);
+  console.log("ERROR RESPONSE:");
+  console.log(error.response?.status);
 
-  // console.log(error.response?.data);
+  console.log(error.response?.data);
 
-  // console.log("REQUEST URL:");
-  // console.log(url);
+  console.log("REQUEST URL:");
+  console.log(url);
 
-  // console.log("REQUEST BODY:");
-  // console.log(requestBody);
+  console.log("REQUEST BODY:");
+  console.log(requestBody);
 
         const responseTime =
           Date.now() - start;
