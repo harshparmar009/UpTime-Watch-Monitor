@@ -5,7 +5,8 @@ metadata:
 spec:
   selector:
     app: uptime-frontend
+  type: NodePort
   ports:
     - port: 80
       targetPort: 80
-  type: LoadBalancer
+      nodePort: 30080
