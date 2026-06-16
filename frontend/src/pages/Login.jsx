@@ -39,7 +39,7 @@ export default function Login() {
           <div className={styles.logoIcon}>
             <Activity size={20} strokeWidth={2.5} />
           </div>
-          <h1 className={styles.title}>Welcome back</h1>
+          <h1 className={styles.title}>Welcome back to monitoring System</h1>
           <p className={styles.subtitle}>Sign in to your UpTimeWatch account</p>
         </div>
 
