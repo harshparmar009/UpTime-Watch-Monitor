@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-frontend
+  template:
+    metadata:
+      labels:
+        app: uptime-frontend
+    spec:
+      containers:
+        - name: uptime-frontend
+          image: harshparmar009/uptime-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
