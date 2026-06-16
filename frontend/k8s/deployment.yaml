@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: uptime-frontend
-          image: harshparmar009/uptime-frontend:v1
+          image: harshparmar009/uptime-frontend:v2
           imagePullPolicy: Always
           ports:
             - containerPort: 80
