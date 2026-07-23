@@ -13,6 +13,8 @@ const websocketService = require("./services/websocketServices");
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -43,24 +45,6 @@ app.use((err, req, res, next) => {
 
 // Connect to MongoDB and start server
 const PORT = process.env.PORT || 5000;
-
-// mongoose.connect(process.env.MONGODB_URI)
-//   .then(() => {
-//     console.log('✅ MongoDB connected');
-//     app.listen(PORT, () => {
-//       console.log(`🚀 Server running on port ${PORT}`);
-//       // Start background monitoring
-//       monitoringService.startMonitoring();
-//       console.log('📡 Monitoring service started');
-//     });
-//   })
-//   .catch((err) => {
-//     console.error('❌ MongoDB connection error:', err);
-//     process.exit(1);
-//   });
-
-  // Attach WebSocket server
-// websocketService.initialize(httpServer);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {

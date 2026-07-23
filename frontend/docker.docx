@@ -1,0 +1,186 @@
+# Docker + Argo CD Deployment Workflow (Frontend)
+
+## 1. Make Changes to Your Application
+
+Update your frontend code (for example, add a new button or modify the UI).
+
+---
+
+## 2. Build a New Docker Image
+
+For the first release:
+
+```bash
+docker build -t harshparmar009/uptime-frontend:v1 .
+```
+
+For future releases:
+
+```bash
+docker build -t harshparmar009/uptime-frontend:v2 .
+```
+
+```bash
+docker build -t harshparmar009/uptime-frontend:v3 .
+```
+
+Use a new version tag (`v2`, `v3`, etc.) whenever you want to deploy updated code.
+
+---
+
+## 3. Verify the Image Exists
+
+List local Docker images:
+
+```bash
+docker images
+```
+
+Example:
+
+```
+REPOSITORY                         TAG
+harshparmar009/uptime-frontend     v1
+```
+
+---
+
+## 4. Test the Image Locally (Optional)
+
+Run the container:
+
+```bash
+docker run -p 8081:80 harshparmar009/uptime-frontend:v1
+```
+
+Open:
+
+```
+http://localhost:8081
+```
+
+---
+
+## 5. Push the Image to Docker Hub
+
+Log in (if needed):
+
+```bash
+docker login
+```
+
+Push the image:
+
+```bash
+docker push harshparmar009/uptime-frontend:v1
+```
+
+---
+
+## 6. Update `deployment.yaml`
+
+Example:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-frontend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: uptime-frontend
+
+  template:
+    metadata:
+      labels:
+        app: uptime-frontend
+
+    spec:
+      containers:
+        - name: uptime-frontend
+          image: harshparmar009/uptime-frontend:v1
+          ports:
+            - containerPort: 80
+```
+
+When deploying a new version, change only the image tag:
+
+```yaml
+image: harshparmar009/uptime-frontend:v2
+```
+
+---
+
+## 7. Commit and Push to GitHub
+
+```bash
+git add .
+git commit -m "Deploy frontend v1"
+git push
+```
+
+For later versions:
+
+```bash
+git add .
+git commit -m "Deploy frontend v2"
+git push
+```
+
+---
+
+## 8. Argo CD Synchronization
+
+Argo CD continuously watches the Git repository.
+
+When it detects that `deployment.yaml` has changed (for example, `v1` → `v2`), it synchronizes Kubernetes automatically (or when you click **Sync**, depending on your configuration).
+
+---
+
+## 9. Kubernetes Deployment
+
+Kubernetes pulls the new Docker image from Docker Hub and performs a rolling update so the application runs the latest version.
+
+---
+
+# Overall Workflow
+
+```
+Developer changes code
+          │
+          ▼
+Build Docker image (v2)
+          │
+          ▼
+Push image to Docker Hub
+          │
+          ▼
+Update deployment.yaml
+(image: v1 → v2)
+          │
+          ▼
+Commit & Push to GitHub
+          │
+          ▼
+Argo CD detects Git change
+          │
+          ▼
+Argo CD syncs Kubernetes
+          │
+          ▼
+Kubernetes pulls v2 image
+          │
+          ▼
+Updated application is running
+```
+
+# Important Notes
+
+* Argo CD watches **Git**, not your source code directly.
+* Kubernetes runs **Docker images**, not your project files.
+* For every application update, create and push a **new image tag** (`v1`, `v2`, `v3`, ...).
+* Avoid relying on `latest` for production deployments; explicit version tags make updates and rollbacks easier to manage.
