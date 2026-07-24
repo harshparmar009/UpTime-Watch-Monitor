@@ -1,7 +1,7 @@
 const express = require("express");
 
 const Monitor = require("../models/Monitor");
-const SwaggerEndpoint = require("../models/SwaggerEndpoint");
+const SwaggerEndpoint = require("../models/SwaggerEndPoint");
 const ApiEvent = require("../models/ApiEvent");
 
 const router = express.Router();

@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 
 const Monitor = require("../models/Monitor");
-const SwaggerEndpoint = require("../models/SwaggerEndpoint");
+const SwaggerEndpoint = require("../models/SwaggerEndPoint");
 const ApiEvent = require("../models/ApiEvent");
 // const { isAuthenticated } = require("../middlewares/authMiddleware");
 const auth = require("../middleware/auth");
